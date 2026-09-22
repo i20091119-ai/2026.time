@@ -13,17 +13,23 @@ Windows + Microsoft Edge 키오스크 모드로 실행되며, **켤 때마다 �
 | 중간 1/3 | **타이머** (남은 시간 원형 표시, 5/20/25분 프리셋, 시작/일시정지, 초기화, 키보드 안내) |
 | 하단 1/3 | 공백 |
 
-## 실행파일 (권장)
+## 설치 (권장)
 
-[Releases → 타이머 실행파일 (최신)](https://github.com/i20091119-ai/2026.time/releases/tag/latest) 에서 `GNMC-Timer-win.zip` 을 받아 압축을 풀고 `GNMC-Timer.exe` 를 실행하면 됩니다.
+[Releases → 타이머 실행파일 (최신)](https://github.com/i20091119-ai/2026.time/releases/tag/latest) 에서 **`GNMC-Timer-Setup.exe`** 를 받아 실행합니다.
 
+1. 설치 파일 더블클릭 (관리자 권한 불필요, 사용자 폴더 `%LOCALAPPDATA%\GNMC-Timer` 에 설치)
+2. "바탕 화면에 바로 가기", "Windows 시작 시 타이머 자동 실행" 을 체크 → 설치
+3. 끝. 바탕 화면의 "경남수학문화관 타이머" 로 실행하거나, 재부팅하면 자동으로 뜹니다.
+
+제거는 Windows 설정 → 앱 → "경남수학문화관 타이머" 에서 하면 됩니다.
+
+동작:
 - 항상 전체화면(테두리 없음, 맨 위)으로 뜨고, 화면 오른쪽 위 ✕ 버튼 → "종료" 로 끝냅니다. Alt + F4 도 됩니다.
 - 켤 때마다 GitHub `main` 의 `version.txt` 를 확인해 `timer.html` 이 바뀌었으면 새로 받습니다. 인터넷이 없으면 그냥 기존 화면으로 뜹니다.
-- `timer.html` 이 exe 안에 내장되어 있어 zip 만 풀어도 바로 동작합니다.
 - 필요한 것: Windows 10/11 + Microsoft Edge (WebView2 런타임, 기본 포함). .NET Framework 4.8 은 Windows 에 기본 내장.
-- exe 는 `main` 에 올라올 때마다 GitHub Actions(`.github/workflows/build-exe.yml`) 가 자동으로 빌드해 Releases 의 `latest` 에 갱신합니다. 소스는 `app/` 폴더.
+- 설치 파일과 zip 은 `main` 에 올라올 때마다 GitHub Actions(`.github/workflows/build-exe.yml`) 가 자동으로 빌드해 Releases 의 `latest` 에 갱신합니다. 소스는 `app/`, 설치 스크립트는 `app/installer.iss`.
 
-부팅 시 자동 실행: `Win + R` → `shell:startup` → 열린 폴더에 `GNMC-Timer.exe` 의 **바로 가기**를 넣습니다.
+설치 없이 쓰려면 같은 곳의 `GNMC-Timer-win.zip` 을 풀어 `GNMC-Timer.exe` 를 실행해도 됩니다.
 
 ## 파일
 

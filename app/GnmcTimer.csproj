@@ -9,6 +9,7 @@
     <AssemblyName>GNMC-Timer</AssemblyName>
     <RootNamespace>GnmcTimer</RootNamespace>
     <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>app.ico</ApplicationIcon>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
     <Product>경남수학문화관 SW체험 타이머</Product>
