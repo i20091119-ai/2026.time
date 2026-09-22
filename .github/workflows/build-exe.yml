@@ -35,10 +35,21 @@ jobs:
           Compress-Archive -Path pkg/GNMC-Timer -DestinationPath GNMC-Timer-win.zip -Force
           Get-ChildItem pkg/GNMC-Timer -Recurse | Select-Object FullName, Length
 
+      - name: Build installer (Inno Setup)
+        shell: pwsh
+        run: |
+          $ver = (Get-Content version.txt -Raw).Trim()
+          $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
+          if (-not (Test-Path $iscc)) { throw "ISCC.exe 를 찾을 수 없음: $iscc" }
+          & $iscc app/installer.iss "/DSrcDir=$PWD\pkg\GNMC-Timer" "/DOutDir=$PWD" "/DAppVersion=$ver"
+          Get-Item GNMC-Timer-Setup.exe | Select-Object Name, Length
+
       - uses: actions/upload-artifact@v4
         with:
           name: GNMC-Timer-win
-          path: GNMC-Timer-win.zip
+          path: |
+            GNMC-Timer-Setup.exe
+            GNMC-Timer-win.zip
 
       - name: Move "latest" tag to this commit
         if: github.event_name != 'pull_request'
@@ -53,9 +64,13 @@ jobs:
           tag_name: latest
           name: 타이머 실행파일 (최신)
           body: |
-            `GNMC-Timer-win.zip` 을 받아 압축을 풀고 `GNMC-Timer.exe` 를 실행하세요.
-            자세한 설치 방법은 압축 안의 `설치안내.txt` 참고.
+            **설치:** `GNMC-Timer-Setup.exe` 를 받아 실행하세요. (관리자 권한 불필요)
+            설치 중 "바탕 화면 바로 가기", "Windows 시작 시 자동 실행" 을 체크할 수 있습니다.
+
+            압축 파일(`GNMC-Timer-win.zip`)은 설치 없이 폴더째 쓰고 싶을 때만 쓰면 됩니다.
 
             빌드 커밋: ${{ github.sha }}
-          files: GNMC-Timer-win.zip
+          files: |
+            GNMC-Timer-Setup.exe
+            GNMC-Timer-win.zip
           prerelease: false
