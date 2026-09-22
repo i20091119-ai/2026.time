@@ -24,6 +24,11 @@
     <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.2903.40" />
   </ItemGroup>
 
+  <!-- .NET Framework 에서는 System.Net.Http 를 명시적으로 참조해야 한다 -->
+  <ItemGroup>
+    <Reference Include="System.Net.Http" />
+  </ItemGroup>
+
   <!-- timer.html 과 version.txt 를 exe 안에 내장 (인터넷 없이 첫 실행해도 화면이 뜨도록) -->
   <ItemGroup>
     <EmbeddedResource Include="..\timer.html" LogicalName="timer.html" />
