@@ -1,0 +1,61 @@
+name: build-exe
+
+# main 에 올라올 때마다 Windows 실행파일을 빌드해서
+# Releases 의 "latest" 에 zip 으로 올린다.
+on:
+  push:
+    branches: [main]
+  pull_request:
+    paths:
+      - "app/**"
+      - "timer.html"
+      - "version.txt"
+      - ".github/workflows/build-exe.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build (net48 + WebView2)
+        run: dotnet build app/GnmcTimer.csproj -c Release -o out
+
+      - name: Package
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path pkg/GNMC-Timer | Out-Null
+          Copy-Item out/* pkg/GNMC-Timer -Recurse -Force
+          Get-ChildItem pkg/GNMC-Timer -Recurse -Include *.pdb,*.xml | Remove-Item -Force
+          Copy-Item timer.html, version.txt, 설치안내.txt pkg/GNMC-Timer -Force
+          Compress-Archive -Path pkg/GNMC-Timer -DestinationPath GNMC-Timer-win.zip -Force
+          Get-ChildItem pkg/GNMC-Timer -Recurse | Select-Object FullName, Length
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GNMC-Timer-win
+          path: GNMC-Timer-win.zip
+
+      - name: Move "latest" tag to this commit
+        if: github.event_name != 'pull_request'
+        run: |
+          git tag -f latest
+          git push -f origin latest
+
+      - name: Publish to Releases (latest)
+        if: github.event_name != 'pull_request'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: latest
+          name: 타이머 실행파일 (최신)
+          body: |
+            `GNMC-Timer-win.zip` 을 받아 압축을 풀고 `GNMC-Timer.exe` 를 실행하세요.
+            자세한 설치 방법은 압축 안의 `설치안내.txt` 참고.
+
+            빌드 커밋: ${{ github.sha }}
+          files: GNMC-Timer-win.zip
+          prerelease: false

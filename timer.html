@@ -151,9 +151,43 @@
     display:flex;align-items:center;justify-content:center;
     opacity:.55;
   }
-  .mini-toggle{right:1.6vh;}
+  .mini-toggle{right:calc(1.6vh + min(9vw,56px) + 1.2vh);}
   .fs-toggle{left:1.6vh;}
-  .mini-toggle:active,.fs-toggle:active{transform:scale(.92);}
+  .exit-toggle{
+    position:fixed;top:1.6vh;right:1.6vh;
+    width:min(9vw,56px);height:min(9vw,56px);
+    border:none;border-radius:14px;
+    background:var(--panel);color:var(--muted);
+    font-size:min(5vw,26px);cursor:pointer;z-index:20;
+    display:flex;align-items:center;justify-content:center;
+    opacity:.55;
+  }
+  .mini-toggle:active,.fs-toggle:active,.exit-toggle:active{transform:scale(.92);}
+  body.exe .fs-toggle{display:none;}   /* 실행파일에서는 항상 전체화면이라 버튼 불필요 */
+
+  /* ===== 종료 확인 창 (보이는 상단 2/3 영역 가운데) ===== */
+  .confirm{
+    position:fixed;left:0;top:0;width:100%;height:66.6vh;
+    display:none;align-items:center;justify-content:center;
+    background:rgba(5,10,20,.75);z-index:50;
+  }
+  .confirm.show{display:flex;}
+  .confirm-box{
+    background:var(--panel);border-radius:20px;
+    padding:4vh 6vw;text-align:center;
+    box-shadow:0 10px 40px rgba(0,0,0,.6);
+    max-width:90vw;
+  }
+  .confirm-msg{font-size:min(6vw,4vh);font-weight:800;margin-bottom:3vh;}
+  .confirm-sub{font-size:min(3.4vw,2.2vh);color:var(--muted);margin-bottom:2vh;min-height:1.2em;}
+  .confirm-btns{display:flex;gap:3vw;justify-content:center;}
+  .confirm-btns button{
+    min-width:min(30vw,220px);padding:1.6vh 0;
+    border:none;border-radius:14px;cursor:pointer;
+    font-size:min(4.6vw,3vh);font-weight:800;
+  }
+  .confirm-btns .yes{background:var(--danger);color:#fff;}
+  .confirm-btns .no{background:#0e1626;color:var(--ink);border:2px solid var(--muted);}
 
   /* ===== 최소화 모드 : 중간 영역에 남은 시간 숫자만 크게 ===== */
   body.mini svg.ring,body.mini .statelabel,
@@ -173,6 +207,18 @@
 <body>
   <button class="fs-toggle" id="fsBtn" title="전체화면">⛶</button>
   <button class="mini-toggle" id="miniBtn" title="최소화">▁</button>
+  <button class="exit-toggle" id="exitBtn" title="종료">✕</button>
+
+  <div class="confirm" id="confirm">
+    <div class="confirm-box">
+      <div class="confirm-msg">타이머를 종료할까요?</div>
+      <div class="confirm-sub" id="confirmSub"></div>
+      <div class="confirm-btns">
+        <button class="yes" id="exitYes">종료</button>
+        <button class="no" id="exitNo">취소</button>
+      </div>
+    </div>
+  </div>
 
   <div id="app">
     <!-- 상단 1/3 : 현재 시각 -->
@@ -254,11 +300,34 @@
   updateClock();
   setInterval(updateClock,250);
 
-  // 버전 표시 (launcher.ps1 이 ?v=버전 으로 열어 줌)
+  // 버전 표시 (실행파일/launcher 가 ?v=버전 으로 열어 줌)
+  const isExe=!!(window.chrome&&window.chrome.webview);
   try{
-    const v=new URLSearchParams(location.search).get('v');
+    const q=new URLSearchParams(location.search);
+    const v=q.get('v');
     if(v)document.getElementById('verText').textContent='v'+v;
+    if(isExe||q.get('app')==='exe')document.body.classList.add('exe');
   }catch(e){}
+
+  // ===== 종료 버튼 =====
+  const confirmBox=document.getElementById('confirm');
+  const confirmSub=document.getElementById('confirmSub');
+  document.getElementById('exitBtn').addEventListener('click',()=>{
+    confirmSub.textContent='';
+    confirmBox.classList.add('show');
+  });
+  document.getElementById('exitNo').addEventListener('click',()=>{
+    confirmBox.classList.remove('show');
+  });
+  document.getElementById('exitYes').addEventListener('click',()=>{
+    if(isExe){
+      window.chrome.webview.postMessage('exit');   // 실행파일이 받아서 앱을 닫음
+      return;
+    }
+    // 브라우저(Edge 키오스크)에서는 스크립트로 창을 못 닫는 경우가 있음
+    try{window.close();}catch(e){}
+    setTimeout(()=>{confirmSub.textContent='창이 닫히지 않으면 키보드에서 Alt + F4 를 누르세요';},400);
+  });
 
   function getCtx(){
     if(!audioCtx){
