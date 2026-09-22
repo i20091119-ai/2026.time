@@ -13,18 +13,31 @@ Windows + Microsoft Edge 키오스크 모드로 실행되며, **켤 때마다 �
 | 중간 1/3 | **타이머** (남은 시간 원형 표시, 5/20/25분 프리셋, 시작/일시정지, 초기화, 키보드 안내) |
 | 하단 1/3 | 공백 |
 
+## 실행파일 (권장)
+
+[Releases → 타이머 실행파일 (최신)](https://github.com/i20091119-ai/2026.time/releases/tag/latest) 에서 `GNMC-Timer-win.zip` 을 받아 압축을 풀고 `GNMC-Timer.exe` 를 실행하면 됩니다.
+
+- 항상 전체화면(테두리 없음, 맨 위)으로 뜨고, 화면 오른쪽 위 ✕ 버튼 → "종료" 로 끝냅니다. Alt + F4 도 됩니다.
+- 켤 때마다 GitHub `main` 의 `version.txt` 를 확인해 `timer.html` 이 바뀌었으면 새로 받습니다. 인터넷이 없으면 그냥 기존 화면으로 뜹니다.
+- `timer.html` 이 exe 안에 내장되어 있어 zip 만 풀어도 바로 동작합니다.
+- 필요한 것: Windows 10/11 + Microsoft Edge (WebView2 런타임, 기본 포함). .NET Framework 4.8 은 Windows 에 기본 내장.
+- exe 는 `main` 에 올라올 때마다 GitHub Actions(`.github/workflows/build-exe.yml`) 가 자동으로 빌드해 Releases 의 `latest` 에 갱신합니다. 소스는 `app/` 폴더.
+
+부팅 시 자동 실행: `Win + R` → `shell:startup` → 열린 폴더에 `GNMC-Timer.exe` 의 **바로 가기**를 넣습니다.
+
 ## 파일
 
 | 파일 | 역할 |
 |---|---|
 | `timer.html` | 타이머 화면 본체. 로고 이미지 내장, 단독 실행 가능 |
-| `launcher.ps1` | 업데이트 확인/적용 후 Edge 전체화면으로 `timer.html` 실행 |
-| `타이머시작.bat` | 더블클릭용 실행 파일. `launcher.ps1` 을 호출 |
+| `app/` | Windows 실행파일 소스 (C#, WinForms + WebView2). CI 가 빌드 |
+| `launcher.ps1` | (스크립트 방식, 대안) 업데이트 확인/적용 후 Edge 전체화면으로 `timer.html` 실행 |
+| `타이머시작.bat` | (스크립트 방식, 대안) 더블클릭용. `launcher.ps1` 을 호출 |
 | `version.txt` | 현재 버전. **배포할 때 이 값을 바꾸면 키오스크가 업데이트를 받아감** |
 | `설치안내.txt` | 키오스크 PC 설치 절차 |
 | `docs-인수인계.md` | 인수인계 문서 (기능·수정 위치 설명) |
 
-## 키오스크 PC 설치
+## 키오스크 PC 설치 (스크립트 방식, exe 를 못 쓸 때)
 
 1. 저장소를 ZIP 으로 내려받아(Code → Download ZIP) 압축을 풀고 폴더째 `C:\timer\` 로 옮깁니다.
 2. `타이머시작.bat` 더블클릭 → Edge 전체화면 타이머가 뜨면 성공.
@@ -61,7 +74,7 @@ Windows + Microsoft Edge 키오스크 모드로 실행되며, **켤 때마다 �
 
 - 남은 1분 이하: 숫자·링 빨간색
 - 종료 30초 전부터 매초 삐빅, 마지막 5초는 높은 음, 종료 시 화면 깜빡임 + 긴 알림음
-- 좌상단 ⛶ 전체화면 토글, 우상단 ▁ 최소화(숫자만 크게)
+- 좌상단 ⛶ 전체화면 토글(브라우저에서만), 우상단 ▁ 최소화(숫자만 크게), ✕ 종료(확인 창 뜸)
 - 소리는 브라우저 정책상 첫 조작(시작 버튼 등) 이후 재생됨
 
 ## 웹으로 열기 (GitHub Pages)

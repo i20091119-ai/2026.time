@@ -2,6 +2,17 @@
  경남수학문화관 학교체험 SW프로그램 타이머 - 설치 안내
 ========================================================
 
+■ 가장 쉬운 방법 : 실행파일(exe)
+  1) GitHub 저장소 → Releases → "타이머 실행파일 (최신)" 에서 GNMC-Timer-win.zip 을 받는다
+  2) 압축을 풀어 폴더째 C:\timer\ 로 옮긴다 (GNMC-Timer.exe, timer.html, dll 들이 함께 있어야 함)
+  3) GNMC-Timer.exe 더블클릭 → 전체화면 타이머가 뜨면 성공
+  4) 종료: 화면 오른쪽 위 ✕ → [종료]   (또는 Alt + F4)
+  5) 부팅 시 자동 실행: Win + R → shell:startup → 열린 폴더에 GNMC-Timer.exe 의 "바로 가기" 넣기
+  - 처음 실행 시 Windows SmartScreen 경고가 뜨면 "추가 정보" → "실행" 을 누른다
+  - 켤 때마다 인터넷으로 새 버전을 확인해 timer.html 을 자동 갱신한다 (아래 "자동 업데이트" 참고)
+
+아래는 exe 대신 bat + PowerShell 스크립트로 실행하는 방법(대안)이다.
+
 ■ 준비물 (모두 같은 폴더에 둘 것, 예: C:\timer\)
   - timer.html       타이머 화면 본체
   - launcher.ps1     업데이트 확인 + Edge 전체화면 실행
