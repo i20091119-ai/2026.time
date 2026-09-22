@@ -1,0 +1,6 @@
+*.bat -text
+*.ps1 -text
+*.html text eol=lf
+*.md text eol=lf
+*.txt text eol=lf
+version.txt -text
